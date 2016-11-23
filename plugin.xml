@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="radio-stream-cordova-plugin"
+    version="1.1.0">
+    <name>RadioStream</name>
+    <description>RadioStream Cordova Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,radio</keywords>
+    <repo>https://github.com/mhapanow/radio-stream-cordova-plugin.git</repo>
+
+    <js-module src="www/radio-plugin.js" name="radio-plugin">
+        <clobbers target="radio-plugin" />
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="RadioStream" >
+                <param name="android-package" value="com.inodes.radiostream.RadioStreamCordovaPlugin"/>
+            </feature>
+        </config-file>
+
+	    <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.INTERNET" />
+	    </config-file>
+
+	    <config-file target="AndroidManifest.xml" parent="/manifest/application">
+
+            <!-- A receiver that will receive media buttons and send as
+            intents to your MediaBrowserServiceCompat implementation.
+            Required on pre-Lollipop. More information at
+            http://developer.android.com/reference/android/support/v4/media/session/MediaButtonReceiver.html -->
+            <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
+                <intent-filter>
+                    <action android:name="android.intent.action.MEDIA_BUTTON" />
+                </intent-filter>
+            </receiver>
+
+            <!-- Main music service, provides media playback services to
+            consumers through MediaSession. Consumers connect to it through
+            MediaController (for play session control) -->
+            <service
+                android:name="com.inodes.radiostream.RadioStreamService"
+                android:exported="true">
+                <intent-filter>
+                    <action android:name="android.media.browse.MediaBrowserService" />
+                </intent-filter>
+            </service>
+
+	    </config-file>
+
+        <source-file src="src/android/RadioStreamCordovaPlugin.java" target-dir="src/com/inodes/radiostream" />
+
+        <source-file src="src/android/AlbumArtCache.java" target-dir="src/com/inodes/radiostream" />
+        <source-file src="src/android/BitmapHelper.java" target-dir="src/com/inodes/radiostream" />
+        <source-file src="src/android/MediaNotificationManager.java" target-dir="src/com/inodes/radiostream" />
+        <source-file src="src/android/RadioStream.java" target-dir="src/com/inodes/radiostream" />
+        <source-file src="src/android/RadioStreamService.java" target-dir="src/com/inodes/radiostream" />
+
+        <source-file src="src/android/org.apache.http.legacy.jar" target-dir="libs" />
+
+    </platform>
+
+</plugin>
