@@ -80,6 +80,18 @@
         <source-file src="src/android/RadioStreamService.java" target-dir="src/com/inodes/radiostream" />
 
         <source-file src="src/android/org.apache.http.legacy.jar" target-dir="libs" />
+        <source-file src="src/android/appcompat-v7-25.0.0.jar" target-dir="libs" />
+        <source-file src="src/android/internal_impl-25.0.0.jar" target-dir="libs" />
+        <source-file src="src/android/support-annotations-25.0.0.jar" target-dir="libs" />
+        <source-file src="src/android/support-media-compat-25.0.0.jar" target-dir="libs" />
+        <source-file src="src/android/support-compat-25.0.0.jar" target-dir="libs" />
+
+        <resource-file src="src/android/ic_default_art.png" target="res/drawable/ic_default_art.png" />
+        <resource-file src="src/android/ic_notification.png" target="res/drawable/ic_notification.png" />
+        <resource-file src="src/android/uamp_ic_pause_white_24dp.png" target="res/drawable/uamp_ic_pause_white_24dp.png" />
+        <resource-file src="src/android/uamp_ic_pause_white_48dp.png" target="res/drawable/uamp_ic_pause_white_48dp.png" />
+        <resource-file src="src/android/uamp_ic_play_arrow_white_24dp.png" target="res/drawable/uamp_ic_play_arrow_white_24dp.png" />
+        <resource-file src="src/android/uamp_ic_play_arrow_white_48dp.png" target="res/drawable/uamp_ic_play_arrow_white_48dp.png" />
 
     </platform>
 

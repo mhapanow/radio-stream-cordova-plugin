@@ -187,22 +187,26 @@ public class RadioStreamService extends MediaBrowserServiceCompat
 
     @Override
     public void onTrackChange(RadioStream.TrackInfo trackInfo) {
-        String myArtist = new String(trackInfo.getArtist());
-        if( myArtist.equalsIgnoreCase("Unknown")) myArtist = mRadioStream.getDefaultArtist();
-        MediaMetadataCompat metadata = new MediaMetadataCompat.Builder()
-                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, trackInfo.getTrackId())
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, trackInfo.getAlbum())
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, myArtist)
-                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, trackInfo.getDuration() / 1000)
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, trackInfo.getCover())
-                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, trackInfo.getTitle())
-                .build();
+        try {
+            String myArtist = new String(trackInfo.getArtist());
+            if (myArtist.equalsIgnoreCase("Unknown")) myArtist = mRadioStream.getDefaultArtist();
+            MediaMetadataCompat metadata = new MediaMetadataCompat.Builder()
+                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, trackInfo.getTrackId())
+                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, trackInfo.getAlbum())
+                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, myArtist)
+                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, trackInfo.getDuration() / 1000)
+                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, trackInfo.getCover())
+                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, trackInfo.getTitle())
+                    .build();
 
-        mSession.setMetadata(metadata);
+            mSession.setMetadata(metadata);
 
-        // Try to start the notification system
-        if( null != mMediaNotificationManager ) {
-            mMediaNotificationManager.startNotification();
+            // Try to start the notification system
+            if (null != mMediaNotificationManager) {
+                mMediaNotificationManager.startNotification();
+            }
+        } catch( NullPointerException e ) {
+            // Do nothing here
         }
     }
 
@@ -269,7 +273,7 @@ public class RadioStreamService extends MediaBrowserServiceCompat
         private final WeakReference<RadioStreamService> mWeakReference;
 
         private DelayedStopHandler(RadioStreamService service) {
-            mWeakReference = new WeakReference<>(service);
+            mWeakReference = new WeakReference(service);
         }
 
         @Override

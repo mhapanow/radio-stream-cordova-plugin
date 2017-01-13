@@ -53,6 +53,7 @@ public class RadioStream {
     private String streamingUrl;
     private int playerStatus;
     private boolean autoStart;
+    private boolean useOffset = false;
     private String lastFMApiKey;
     private String centovaURL;
     private String centovaUser;
@@ -85,9 +86,9 @@ public class RadioStream {
         this.trackInfo = new TrackInfo();
         this.defaultArtist = "";
 
-        this.statusChangeListener = new ArrayList<>();
-        this.trackChangeListener = new ArrayList<>();
-        this.radioDestroyListener = new ArrayList<>();
+        this.statusChangeListener = new ArrayList();
+        this.trackChangeListener = new ArrayList();
+        this.radioDestroyListener = new ArrayList();
         this.mMediaSessionCallback = new MediaSessionCallback();
 
     }
@@ -196,7 +197,7 @@ public class RadioStream {
      * Removes all status change listeners
      */
     public void clearStatusChangeListener() {
-        statusChangeListener = new ArrayList<>();
+        statusChangeListener = new ArrayList();
     }
 
     /**
@@ -206,7 +207,7 @@ public class RadioStream {
      */
     public void addStatusChangeListener(StatusChangeListener listener) {
         if (statusChangeListener == null)
-            statusChangeListener = new ArrayList<>();
+            statusChangeListener = new ArrayList();
 
         statusChangeListener.add(listener);
     }
@@ -225,7 +226,7 @@ public class RadioStream {
      * Removes all radio destroy listeners
      */
     public void clearRadioDestroyListener() {
-        radioDestroyListener = new ArrayList<>();
+        radioDestroyListener = new ArrayList();
     }
 
     /**
@@ -235,7 +236,7 @@ public class RadioStream {
      */
     public void addRadioDestroyListener(RadioDestroyListener listener) {
         if (radioDestroyListener== null)
-            radioDestroyListener = new ArrayList<>();
+            radioDestroyListener = new ArrayList();
 
         radioDestroyListener.add(listener);
     }
@@ -254,7 +255,7 @@ public class RadioStream {
      * Removes all track change listeners
      */
     public void clearTrackChangeListener() {
-        trackChangeListener = new ArrayList<>();
+        trackChangeListener = new ArrayList();
     }
 
     /**
@@ -264,7 +265,7 @@ public class RadioStream {
      */
     public void addTrackChangeListener(TrackChangeListener listener) {
         if (trackChangeListener == null)
-            trackChangeListener = new ArrayList<>();
+            trackChangeListener = new ArrayList();
 
         trackChangeListener.add(listener);
     }
@@ -435,8 +436,7 @@ public class RadioStream {
                     infoUpdater.start();
                 }
 
-            } catch (IllegalArgumentException | SecurityException
-                    | IllegalStateException | IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 setPlayerStatus(PLAYER_STATUS_ERROR);
             }
@@ -448,6 +448,9 @@ public class RadioStream {
      * @return
      */
     public long getBufferOffset() {
+        if( !useOffset )
+            return 0;
+
         if( bufferingEndTime == 0 || bufferingStartTime == 0 )
             return 0;
         else
@@ -653,12 +656,13 @@ public class RadioStream {
             JSONObject songJson = jsonArr.getJSONObject(0);
 
             // Checks timing for buffering correction
+            Log.d(TAG, "----------------- bufferingTime " + getBufferOffset());
             long virtualNow = (System.currentTimeMillis() + getBufferOffset()) / 1000;
             long trackTime = songJson.getLong("time");
             Log.d(TAG, "----------------- trackTime " + trackTime + " and virtual now "
                     + virtualNow + " dif: " +(trackTime - virtualNow));
-            if( trackTime > virtualNow && jsonArr.length() > 1 )
-                songJson = jsonArr.getJSONObject(1);
+//            if( trackTime > virtualNow && jsonArr.length() > 1 )
+//                songJson = jsonArr.getJSONObject(1);
 
             JSONObject trackJson = songJson.getJSONObject("track");
 

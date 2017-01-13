@@ -112,15 +112,12 @@ public class MediaNotificationManager extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
         Log.d(TAG, "Received intent with action " + action);
-        switch (action) {
-            case ACTION_PAUSE:
-                mService.stopRadio();
-                break;
-            case ACTION_PLAY:
-                mService.playRadio();
-                break;
-            default:
-                Log.w(TAG, "Unknown intent ignored. Action=" + action);
+        if(ACTION_PAUSE.equals(action)) {
+            mService.stopRadio();
+        } else if(ACTION_PLAY.equals(action)) {
+            mService.playRadio();
+        } else {
+            Log.w(TAG, "Unknown intent ignored. Action=" + action);
         }
     }
 
@@ -172,7 +169,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
                 fetchArtUrl = artUrl;
                 // use a placeholder art while the remote art is being downloaded
                 art = BitmapFactory.decodeResource(mService.getResources(),
-                        R.drawable.ic_default_art);
+                        mService.getResources().getIdentifier("ic_default_art", "drawable", mService.getPackageName()));
             }
         }
 
@@ -182,9 +179,11 @@ public class MediaNotificationManager extends BroadcastReceiver {
                                 new int[]{playPauseButtonPosition})  // show only play/pause in compact view
                         .setMediaSession(mSessionToken))
                 .setColor(mNotificationColor)
-                .setSmallIcon(R.drawable.ic_notification)
+                .setSmallIcon(mService.getResources().getIdentifier("ic_notification", "drawable", mService.getPackageName()))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setUsesChronometer(true)
+                .setWhen(0)
+                .setShowWhen(false)
+                .setUsesChronometer(false)
                 .setContentIntent(createContentIntent(description))
                 .setContentTitle(description.getTitle())
                 .setContentText(description.getSubtitle())
@@ -205,11 +204,11 @@ public class MediaNotificationManager extends BroadcastReceiver {
         PendingIntent intent;
         if( RadioStream.PLAYER_STATUS_PLAYING == mService.getPlayerStatus() ) {
             label = "pause";
-            icon = R.drawable.uamp_ic_pause_white_24dp;
+            icon =  mService.getResources().getIdentifier("uamp_ic_pause_white_24dp", "drawable", mService.getPackageName());
             intent = mPauseIntent;
         } else {
             label = "play";
-            icon = R.drawable.uamp_ic_play_arrow_white_24dp;
+            icon =  mService.getResources().getIdentifier("uamp_ic_play_arrow_white_24dp", "drawable", mService.getPackageName());
             intent = mPlayIntent;
         }
         builder.addAction(new NotificationCompat.Action(icon, label, intent));
@@ -223,23 +222,11 @@ public class MediaNotificationManager extends BroadcastReceiver {
             return;
         }
 
-//        if (mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING
-//                && mPlaybackState.getPosition() >= 0) {
-//            Log.d(TAG, "updateNotificationPlaybackState. updating playback position to " +
-//                    ((System.currentTimeMillis() - mPlaybackState.getPosition()) / 1000) + " seconds");
-//            builder
-//                    .setWhen(System.currentTimeMillis() - mPlaybackState.getPosition())
-//                    .setShowWhen(true)
-//                    .setUsesChronometer(true);
-//        } else {
-            Log.d(TAG, "updateNotificationPlaybackState. hiding playback position");
-            builder
-                    .setWhen(0)
-                    .setShowWhen(false)
-                    .setUsesChronometer(false);
-//        }
-
-        // Make sure that the notification can be dismissed by the user when we are not playing:
+        Log.d(TAG, "updateNotificationPlaybackState. hiding playback position");
+        builder
+                .setWhen(0)
+                .setShowWhen(false)
+                .setUsesChronometer(false);
         builder.setOngoing(RadioStream.PLAYER_STATUS_PLAYING == mService.getPlayerStatus());
     }
 

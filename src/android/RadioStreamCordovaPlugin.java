@@ -70,15 +70,15 @@ public class RadioStreamCordovaPlugin extends CordovaPlugin {
             
 
             rs = RadioStream.getInstance(getApplicationContext());
-            rs.setActivity(this.cordova.getActivity());
+            rs.setActivity(this.cordova.getActivity().getClass());
 
-            rs.setAutoStart(json.has('autoStart') ? json.getBoolean('autoStart') : AUTO_PLAYBACK);
-            rs.setStreamingUrl(json.has('streamingURL') ? json.getString('streamingURL') : STREAMING_URL);
-            rs.setCentovaUser(json.has('centovacastUser') ? json.getString('centovacastUser') : CENTOVACAST_USER);
-            rs.setCentovaPass(json.has('centovacastPass') ? json.getString('centovacastPass') : CENTOVACAST_PASS);
-            rs.setCentovaURL(json.has('centovacastURL') ? json.getString('centovacastURL') : CENTOVACAST_URL);
-            rs.setLastFMApiKey(json.has('lastfmApiKey') ? json.getString('lastfmApiKey') : LASTFM_APIKEY);
-            rs.setDefaultArtist(json.has('defaultArtist') ? json.getString('defaultArtist') : DEFAULT_ARTIST);
+            rs.setAutoStart(json.has("autoStart") ? json.getBoolean("autoStart") : AUTO_PLAYBACK);
+            rs.setStreamingUrl(json.has("streamingURL") ? json.getString("streamingURL") : STREAMING_URL);
+            rs.setCentovaUser(json.has("centovacastUser") ? json.getString("centovacastUser") : CENTOVACAST_USER);
+            rs.setCentovaPass(json.has("centovacastPass") ? json.getString("centovacastPass") : CENTOVACAST_PASS);
+            rs.setCentovaURL(json.has("centovacastURL") ? json.getString("centovacastURL") : CENTOVACAST_URL);
+            rs.setLastFMApiKey(json.has("lastfmApiKey") ? json.getString("lastfmApiKey") : LASTFM_APIKEY);
+            rs.setDefaultArtist(json.has("defaultArtist") ? json.getString("defaultArtist") : DEFAULT_ARTIST);
             rs.addStatusChangeListener(new RadioStream.StatusChangeListener() {
                 @Override
                 public void onStatusChange(int status) {
@@ -116,7 +116,7 @@ public class RadioStreamCordovaPlugin extends CordovaPlugin {
             r.put("result", "ok");
             callbackContext.success(r);
 
-        } else if ("getPlayerStatus".equals(action)) {
+        } else if ("getTrackInfo".equals(action)) {
             JSONObject r = new JSONObject();
             RadioStream.TrackInfo info = rs.getTrackInfo();
             r.put("trackId", info.getTrackId());
@@ -135,4 +135,7 @@ public class RadioStreamCordovaPlugin extends CordovaPlugin {
         return true;
     }
 
+    private int getAppResource(String name, String type) {
+        return this.cordova.getActivity().getResources().getIdentifier(name, type, cordova.getActivity().getPackageName());
+    }
 }
